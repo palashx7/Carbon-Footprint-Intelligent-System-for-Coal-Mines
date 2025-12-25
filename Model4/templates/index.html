@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Credits Calculator | EcoFuture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="main-content">
+            <div class="calculator-card">
+                <h1 class="title">Carbon Credits Calculator</h1>
+                <form action="/upload" method="post" enctype="multipart/form-data" class="calculator-form">
+                    <div class="input-group">
+                        <div class="file-input-wrapper">
+                            <i class="fas fa-file-upload"></i>
+                            <input class="input-field" type="file" id="file" name="file" required placeholder="Select a file">
+                        </div>
+                        <button type="submit" class="submit-btn">Calculate Now</button>
+                    </div>
+                </form>
+
+                {% if table %}
+                <h2 class="subtitle">Results</h2>
+                <div class="table-wrapper">
+                    {{ table|safe }}
+                </div>
+                {% endif %}
+
+                {% if plot_url %}
+                <div class="plot-card">
+                    <h2 class="subtitle">Emissions Plot</h2>
+                    <div class="plot-container">
+                        <img src="data:image/png;base64,{{ plot_url }}" alt="Emissions Plot" class="plot-image">
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

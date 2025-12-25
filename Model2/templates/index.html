@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Credit Price Predictor | EcoFuture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="main-content">
+            <div class="predictor-card">
+                <h1 class="title">Carbon Credit Price Predictor</h1>
+                <form class="prediction-form" id="prediction-form">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fas fa-tree"></i>
+                            <select class="input-field select-option" id="offset_method" name="offset_method" required>
+                                <option value="">Offset Method</option>
+                                <option value="Afforestation">Afforestation</option>
+                                <option value="Renewable Energy">Renewable Energy</option>
+                                <option value="Energy Efficiency">Energy Efficiency</option>
+                                <option value="Reforestation">Reforestation</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-globe"></i>
+                            <select class="input-field select-option" id="project_location" name="project_location" required>
+                                <option value="">Project Location</option>
+                                <option value="India">India</option>
+                                <option value="USA">USA</option>
+                                <option value="China">China</option>
+                                <option value="Brazil">Brazil</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fas fa-check-circle"></i>
+                            <select class="input-field select-option" id="verification_status" name="verification_status" required>
+                                <option value="">Verification Status</option>
+                                <option value="Verified">Verified</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-bolt"></i>
+                            <select class="input-field select-option" id="technology_used" name="technology_used" required>
+                                <option value="">Technology Used</option>
+                                <option value="Solar">Solar</option>
+                                <option value="Wind">Wind</option>
+                                <option value="Hydro">Hydro</option>
+                                <option value="Biomass">Biomass</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fas fa-cloud"></i>
+                            <input class="input-field" type="number" id="emission_reduction" name="emission_reduction" placeholder="Emission Reduction (tonnes)" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-ruler-combined"></i>
+                            <input class="input-field" type="number" id="project_size" name="project_size" placeholder="Project Size (hectares)" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">Predict Now</button>
+                </form>
+                <div class="result" id="result">Awaiting your prediction...</div>
+                <div class="stats-preview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const offset_method = document.getElementById('offset_method').value;
+            const project_location = document.getElementById('project_location').value;
+            const verification_status = document.getElementById('verification_status').value;
+            const technology_used = document.getElementById('technology_used').value;
+            const emission_reduction = document.getElementById('emission_reduction').value;
+            const project_size = document.getElementById('project_size').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.classList.remove('show');
+            
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    offset_method,
+                    project_location,
+                    verification_status,
+                    technology_used,
+                    emission_reduction,
+                    project_size
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerText = `Error: ${data.error}`;
+                } else {
+                    resultDiv.innerText = `Predicted Carbon Credit Price: ₹${data.predicted_price.toFixed(2)}\nMarket Confidence: High\nPotential ROI: Analyzing...`;
+                }
+                resultDiv.classList.add('show');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerText = 'An error occurred. Please try again.';
+                resultDiv.classList.add('show');
+            });
+        });
+    </script>
+<!--
+    <script>
+    // Detect if this page is opened inside the main dashboard iframe
+    if (window.self !== window.top) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) sidebar.style.display = 'none';  // Hide sidebar if in iframe
+        document.body.style.margin = "0";
+        document.body.style.padding = "0";
+    }
+    </script>
+-->
+
+</body>
+</html>

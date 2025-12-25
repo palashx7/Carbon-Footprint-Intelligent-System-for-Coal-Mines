@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Neutrality Predictor | EcoFuture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(120deg, #e0e7ff 0%, #d1e4ff 100%);
+            min-height: 100vh;
+            color: #1a2a44;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #1a2a44;
+            padding: 2.5rem 1.5rem;
+            color: white;
+            position: fixed;
+            height: 100%;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.15);
+            transition: width 0.3s ease;
+        }
+
+        .sidebar .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00c4cc;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 1.8rem 0;
+        }
+
+        .sidebar ul li a {
+            color: #d1d9e6;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.9rem 1.5rem;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 0.8rem;
+        }
+
+        .sidebar ul li a:hover {
+            background: #00c4cc;
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .main-content {
+            margin-left: 0px;
+            flex: 1;
+            padding: 4rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('https://www.transparenttextures.com/patterns/clean-gray-paper.png');
+        }
+
+        .predictor-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 7rem;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #1a2a44;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            background: linear-gradient(45deg, #00c4cc, #007bff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(45deg, #00c4cc, #007bff);
+            border-radius: 2px;
+        }
+
+        .prediction-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            color: #00c4cc;
+            font-size: 1.2rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1.2rem 1.2rem 1.2rem 3rem;
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-bottom: 2px solid #00c4cc;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .input-field::placeholder {
+            color: #aab2c0;
+            font-weight: 300;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #00c4cc, #007bff);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .result {
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(45deg, #f0f7ff 0%, #e6f0ff 100%);
+            border-radius: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #1a2a44;
+            line-height: 1.5;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="main-content">
+            <div class="predictor-card">
+                <h1 class="title">Carbon Neutrality Predictor</h1>
+                <form class="prediction-form" id="prediction-form">
+                    <div class="input-group">
+                        <i class="fas fa-cloud"></i>
+                        <input class="input-field" type="number" id="emissions" name="emissions" placeholder="Coal Extracted -> Emissions (tonnes)" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-dollar-sign"></i>
+                        <input class="input-field" type="number" id="cost" name="cost" placeholder="Cost (USD)" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Predict Now</button>
+                </form>
+                <div class="result" id="result">Awaiting your prediction...</div>
+                <div class="stats-preview"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script src="../static/script.js"></script> -->
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const emissions = document.getElementById('emissions').value;
+            const cost = document.getElementById('cost').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.classList.remove('show');
+            
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ emissions, cost })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerText = `Error: ${data.error}`;
+                } else {
+                    resultDiv.innerText = `Optimal Strategy: ${data.best_strategy}\nNeutralization Potential: ${data.best_effectiveness.toFixed(2)} tonnes\nProjected ROI: Analyzing...`;
+                }
+                resultDiv.classList.add('show');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerText = 'An error occurred. Please try again.';
+                resultDiv.classList.add('show');
+            });
+        });
+    </script>
+<!--
+    <script>
+    // Detect if this page is opened inside the main dashboard iframe
+    if (window.self !== window.top) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) sidebar.style.display = 'none';  // Hide sidebar if in iframe
+        document.body.style.margin = "0";
+        document.body.style.padding = "0";
+    }
+    </script>
+-->
+</body>
+</html>

@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+body {
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+form {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="number"] {
+    margin-bottom: 10px;
+}
+
+#result {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+    border-top-right-radius: 2rem;
+    background-color: #a3d1f9;
+    padding: 15px;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed;
+}
+
+.sidebar ul {
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    padding: 0;
+}
+.list-item-box{
+    background-color: #f0f8ff;
+    width: 15rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+}
+.sidebar ul li {
+    margin: 15px 0;
+}
+.sidebar ul li:hover{
+    text-decoration: underline;
+    color: #a5a1a1;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+}
+
+.content {
+    margin-left: 22rem;
+    margin-top: 3rem;
+}
+
+#contentArea {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+}
+.cnp-title{
+    color: #ff4400;
+    font-size: 3rem;
+    font-weight: bold;
+}
+#prediction-form{
+    background-color: #f0f8ff;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 50rem;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+.input-label{
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.input-field{
+    border: none;
+    width: 25rem;
+    border-radius: 1rem;
+    height: 2.5rem;
+    box-shadow: #a5a1a1;
+    border: 1px solid #d7d7d7;
+}
+.input-field::placeholder{
+    padding: 1rem;
+    color: #a5a1a1;
+}
+.submit-btn{
+    width: 7rem;
+    height: 3rem;
+    background-color: #a3d1f9;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+#result{
+    font-style: italic;
+    font-size: 1.5rem;
+    background-color: #ffbda57e;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}

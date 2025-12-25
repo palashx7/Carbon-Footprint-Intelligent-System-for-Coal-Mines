@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ML models
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.onnx
+
+# Datasets
+*.csv
+*.zip
+*.npy
+
+# OS
+.DS_Store

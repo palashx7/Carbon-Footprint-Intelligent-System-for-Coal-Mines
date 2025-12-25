@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Dashboard | Coal India Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo"><i class="fas fa-leaf"></i> Carbon Sathi</div>
+            <ul>
+                <li><a href="#" class="active"><i class="fas fa-user-shield"></i>Government Dashboard</a></li>
+                <li><a href="#all-companies"><i class="fas fa-industry"></i>All Companies</a></li>
+                <li><a href="#auctions"><i class="fas fa-gavel"></i>Auctions</a></li>
+                <li><a href="#reports"><i class="fas fa-file-alt"></i>Reports</a></li>
+                <li><a href="#notices"><i class="fas fa-bell"></i>Notices</a></li>
+                <li><a href="#messages"><i class="fas fa-envelope"></i>Messages</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="dashboard">
+                <h1 class="title">Government Dashboard</h1>
+
+                <!-- All Companies Section -->
+                <div class="dashboard-section" id="all-companies">
+                    <h2><i class="fas fa-industry"></i> All Companies</h2>
+                    <div class="compliance-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Production (tonnes)</th>
+                                    <th>Emissions (kg CO2)</th>
+                                    <th>Compliance Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="companies-table-body">
+                                <!-- Dynamically populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Auctions Section -->
+                <div class="dashboard-section" id="auctions">
+                    <h2><i class="fas fa-gavel"></i> Auctions</h2>
+                    <div class="auction-form">
+                        <input type="text" id="auction-name" placeholder="Auction Name (e.g., Coal Block X)">
+                        <input type="number" id="auction-reserve" placeholder="Reserve Price (INR)">
+                        <button class="submit-btn" onclick="startAuction()">Start Auction</button>
+                    </div>
+                    <div class="auction-list" id="auction-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="dashboard-section" id="reports">
+                    <h2><i class="fas fa-file-alt"></i> Reports</h2>
+                    <div class="report-form">
+                        <select id="report-type">
+                            <option value="production">Production Report</option>
+                            <option value="emissions">Emissions Report</option>
+                            <option value="compliance">Compliance Report</option>
+                        </select>
+                        <button class="submit-btn" onclick="generateReport()">Generate Report</button>
+                    </div>
+                    <div class="report-list" id="report-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Notices Section -->
+                <div class="dashboard-section" id="notices">
+                    <h2><i class="fas fa-bell"></i> Notices</h2>
+                    <div class="notice-form">
+                        <textarea id="notice-text" placeholder="Enter notice or alert..." rows="4"></textarea>
+                        <button class="submit-btn" onclick="sendNotice()">Send Notice</button>
+                    </div>
+                    <div id="notice-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Messages Section -->
+                <div class="dashboard-section" id="messages">
+                    <h2><i class="fas fa-envelope"></i> Messages</h2>
+                    <div class="message-form">
+                        <select id="message-company">
+                            <option value="">Select Company</option>
+                            <option value="BCCL">BCCL</option>
+                            <option value="CCL">CCL</option>
+                            <!-- Add more companies dynamically -->
+                        </select>
+                        <textarea id="gov-message-text" placeholder="Send a message to the selected company..." rows="4"></textarea>
+                        <button class="submit-btn" onclick="sendGovMessage()">Send Message</button>
+                    </div>
+                    <div id="gov-message-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5005';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch All Companies
+            fetch(`${API_BASE_URL}/api/companies`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('companies-table-body');
+                    tbody.innerHTML = '';
+                    data.forEach(company => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${company.name}</td>
+                            <td>${company.production.toLocaleString()}</td>
+                            <td>${company.emissions.toLocaleString()}</td>
+                            <td><span class="status ${company.compliance_status}">${company.compliance_status}</span></td>
+                            <td>
+                                ${company.compliance_status === 'approved' ? 
+                                    '<button class="action-btn" onclick="viewDetails(\'' + company.name + '\')">View</button>' :
+                                    '<button class="action-btn approve-btn" onclick="approveCompany(\'' + company.name + '\')">Approve</button>' +
+                                    '<button class="action-btn reject-btn" onclick="rejectCompany(\'' + company.name + '\')">Reject</button>'}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching companies:', error);
+                    document.getElementById('companies-table-body').innerHTML = '<tr><td colspan="5">Error loading data</td></tr>';
+                });
+
+            // Fetch Auctions
+            fetch(`${API_BASE_URL}/api/auctions`)
+                .then(response => response.json())
+                .then(data => {
+                    const auctionList = document.getElementById('auction-list');
+                    auctionList.innerHTML = '';
+                    data.forEach(auction => {
+                        const div = document.createElement('div');
+                        div.className = 'auction-item';
+                        div.innerHTML = `<p>${auction.name} - Reserve: ₹${auction.reserve.toLocaleString()} - Status: ${auction.status}</p>`;
+                        auctionList.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching auctions:', error);
+                    document.getElementById('auction-list').innerHTML = '<p>Error loading auctions</p>';
+                });
+
+            // Fetch Reports
+            fetch(`${API_BASE_URL}/api/reports`)
+                .then(response => response.json())
+                .then(data => {
+                    const reportList = document.getElementById('report-list');
+                    reportList.innerHTML = '';
+                    data.forEach(report => {
+                        const div = document.createElement('div');
+                        div.className = 'report-item';
+                        div.innerHTML = `<p>${report.date}: ${report.type} - <a href="${report.url}" target="_blank">Download</a></p>`;
+                        reportList.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching reports:', error);
+                    document.getElementById('report-list').innerHTML = '<p>Error loading reports</p>';
+                });
+
+            // Fetch Notices
+            fetch(`${API_BASE_URL}/api/notices`)
+                .then(response => response.json())
+                .then(data => {
+                    const noticeList = document.getElementById('notice-list');
+                    noticeList.innerHTML = '';
+                    data.forEach(notice => {
+                        const p = document.createElement('p');
+                        p.className = 'notice-item';
+                        p.innerText = `${notice.date}: ${notice.text}`;
+                        noticeList.appendChild(p);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching notices:', error);
+                    document.getElementById('notice-list').innerHTML = '<p>Error loading notices</p>';
+                });
+
+            // Fetch Messages (All Companies)
+            fetch(`${API_BASE_URL}/api/messages/all`)
+                .then(response => response.json())
+                .then(data => {
+                    const messageList = document.getElementById('gov-message-list');
+                    messageList.innerHTML = '';
+                    data.forEach(message => {
+                        const p = document.createElement('p');
+                        p.className = `message-item ${message.sender === 'Government' ? 'sent' : 'received'}`;
+                        p.innerText = `${message.date}: ${message.text} (${message.sender} to ${message.company})`;
+                        messageList.appendChild(p);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching messages:', error);
+                    document.getElementById('gov-message-list').innerHTML = '<p>Error loading messages</p>';
+                });
+        });
+
+        function approveCompany(company) {
+            fetch(`${API_BASE_URL}/api/approve/${company}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error approving company:', error);
+                    alert('Failed to approve company');
+                });
+        }
+
+        function rejectCompany(company) {
+            fetch(`${API_BASE_URL}/api/reject/${company}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error rejecting company:', error);
+                    alert('Failed to reject company');
+                });
+        }
+
+        function viewDetails(company) {
+            alert(`Viewing details for ${company}...`);
+        }
+
+        function startAuction() {
+            const name = document.getElementById('auction-name').value.trim();
+            const reserve = parseInt(document.getElementById('auction-reserve').value);
+            if (name && reserve > 0) {
+                fetch(`${API_BASE_URL}/api/start-auction`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, reserve })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const auctionList = document.getElementById('auction-list');
+                        const div = document.createElement('div');
+                        div.className = 'auction-item';
+                        div.innerHTML = `<p>${data.auction.name} - Reserve: ₹${data.auction.reserve.toLocaleString()} - Status: ${data.auction.status}</p>`;
+                        auctionList.insertBefore(div, auctionList.firstChild);
+                        document.getElementById('auction-name').value = '';
+                        document.getElementById('auction-reserve').value = '';
+                        alert(data.message);
+                    })
+                    .catch(error => {
+                        console.error('Error starting auction:', error);
+                        alert('Failed to start auction');
+                    });
+            } else {
+                alert('Please enter a valid auction name and reserve price');
+            }
+        }
+
+        function generateReport() {
+            const type = document.getElementById('report-type').value;
+            fetch(`${API_BASE_URL}/api/generate-report`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const reportList = document.getElementById('report-list');
+                    const div = document.createElement('div');
+                    div.className = 'report-item';
+                    div.innerHTML = `<p>${data.report.date}: ${data.report.type} - <a href="${data.report.url}" target="_blank">Download</a></p>`;
+                    reportList.insertBefore(div, reportList.firstChild);
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('Error generating report:', error);
+                    alert('Failed to generate report');
+                });
+        }
+
+        function sendNotice() {
+            const noticeText = document.getElementById('notice-text').value.trim();
+            if (noticeText) {
+                fetch(`${API_BASE_URL}/api/send-notice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notice: noticeText })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const noticeList = document.getElementById('notice-list');
+                        const p = document.createElement('p');
+                        p.className = 'notice-item';
+                        p.innerText = `${data.notice.date}: ${data.notice.text}`;
+                        noticeList.insertBefore(p, noticeList.firstChild);
+                        document.getElementById('notice-text').value = '';
+                        alert(data.message);
+                    })
+                    .catch(error => {
+                        console.error('Error sending notice:', error);
+                        alert('Failed to send notice');
+                    });
+            } else {
+                alert('Please enter a notice text');
+            }
+        }
+
+        function sendGovMessage() {
+            const company = document.getElementById('message-company').value;
+            const messageText = document.getElementById('gov-message-text').value.trim();
+            if (company && messageText) {
+                fetch(`${API_BASE_URL}/api/send-message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ company, text: messageText, sender: 'Government' })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const messageList = document.getElementById('gov-message-list');
+                        const p = document.createElement('p');
+                        p.className = 'message-item sent';
+                        p.innerText = `${data.message.date}: ${data.message.text} (Government to ${data.message.company})`;
+                        messageList.insertBefore(p, messageList.firstChild);
+                        document.getElementById('gov-message-text').value = '';
+                        alert('Message sent successfully');
+                    })
+                    .catch(error => {
+                        console.error('Error sending message:', error);
+                        alert('Failed to send message');
+                    });
+            } else {
+                alert('Please select a company and enter a message');
+            }
+        }
+    </script>
+</body>
+</html>

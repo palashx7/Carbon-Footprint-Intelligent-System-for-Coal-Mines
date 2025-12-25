@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCCL Dashboard | Coal India Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        
+        <div class="main-content">
+            <div class="dashboard">
+                <h1 class="title">Dashboard</h1>
+                
+                <!-- Production Metrics Section -->
+                <div class="dashboard-section">
+                    <h2><i class="fas fa-industry"></i> Production Metrics</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <p>Daily Production</p>
+                            <span id="daily-production">Loading...</span>
+                        </div>
+                        <div class="metric-card">
+                            <p>Monthly Production</p>
+                            <span id="monthly-production">Loading...</span>
+                        </div>
+                        <div class="metric-card">
+                            <p>Yearly Production</p>
+                            <span id="yearly-production">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Notices Section -->
+                <div class="dashboard-section">
+                    <h2><i class="fas fa-bell"></i> Government Notices</h2>
+                    <div id="notice-list">
+                        
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Communication Channel Section -->
+                <div class="dashboard-section">
+                    <h2><i class="fas fa-envelope"></i> Communication Channel</h2>
+                    <div class="message-form">
+                        <textarea id="message-text" placeholder="Send a message to the government..." rows="4"></textarea>
+                        <button class="submit-btn" onclick="sendMessage()">Send Message</button>
+                    </div>
+                    <div id="message-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Company-Wise Production & Emissions -->
+                <div class="dashboard-section">
+                    <h2><i class="fas fa-database"></i> Company-Wise Production & Emissions</h2>
+
+                    <table id="company-table" border="1" cellpadding="10" cellspacing="0" 
+                        style="width:100%; background:white; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                        <thead style="background:#1a2a44; color:white;">
+                            <tr>
+                                <th>Company</th>
+                                <th>Production (Tons)</th>
+                                <th>Emissions (Tons)</th>
+                                <th>Emission Intensity</th>
+                                <th>Compliance Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+
+
+            
+
+                <!-- Predictive Analytics Section -->
+                <div class="dashboard-section">
+                <h2><i class="fas fa-chart-line"></i> Future Forecast</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                    <p>Next Year</p>
+                    <span id="forecast-year">Loading...</span>
+                    </div>
+                    <div class="metric-card">
+                    <p>Predicted Production</p>
+                    <span id="forecast-production">Loading...</span>
+                    </div>
+                    <div class="metric-card">
+                    <p>Predicted Emissions</p>
+                    <span id="forecast-emission">Loading...</span>
+                    </div>
+                </div>
+                </div>
+
+
+                <!-- Reports Section -->
+                <div class="dashboard-section">
+                    <h2><i class="fas fa-file-alt"></i> Reports & Data Exports</h2>
+
+                    <div class="report-buttons">
+                        <button class="report-btn" onclick="generateReport('production')">
+                            <i class="fas fa-industry"></i> Generate Production Report
+                        </button>
+                        <button class="report-btn" onclick="generateReport('emissions')">
+                            <i class="fas fa-cloud"></i> Generate Emissions Report
+                        </button>
+                        <button class="report-btn" onclick="generateReport('compliance')">
+                            <i class="fas fa-check-circle"></i> Generate Compliance Report
+                        </button>
+                    </div>
+
+                    <div id="report-list" class="report-list">
+                        <p>Recent Reports:</p>
+                        <ul id="reports"></ul>
+                    </div>
+                </div>
+
+
+                <!-- Compliance Heatmap Section -->
+                <div class="dashboard-section" id="heatmap-section">
+                    <h2><i class="fas fa-th"></i> Compliance Heatmap</h2>
+
+                    <div class="heatmap-controls">
+                        <label for="heatmapMetric">Metric:</label>
+                        <select id="heatmapMetric">
+                            <option value="score">Compliance Score</option>
+                            <option value="emission_intensity">Emission Intensity</option>
+                            <option value="green_investment">Green Investment Ratio</option>
+                        </select>
+                        <button class="report-btn" id="refreshHeatmap">Refresh</button>
+                    </div>
+
+                    <div id="heatmap-container" class="heatmap-container">
+                        <table id="heatmap-table">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Status</th>
+                                    <th id="metricHeader">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <!-- Data Visualization Section -->
+                <div class="dashboard-section">
+                    <h2><i class="fas fa-chart-line"></i> Data Visualization</h2>
+
+                    <div class="chart-container">
+                        <canvas id="productionEmissionChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Auctions Section -->
+                <div class="dashboard-section">
+                    <h2><i class="fas fa-gavel"></i> Auctions</h2>
+                    <div id="auction-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+
+
+                <div class="stats-preview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5005';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch Production Metrics
+            fetch(`${API_BASE_URL}/api/production/BCCL`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('daily-production').innerText = `${data.daily.toLocaleString()} tonnes`;
+                    document.getElementById('monthly-production').innerText = `${data.monthly.toLocaleString()} tonnes`;
+                    document.getElementById('yearly-production').innerText = `${data.yearly.toLocaleString()} tonnes`;
+                })
+                .catch(error => {
+                    console.error('Error fetching production:', error);
+                    document.getElementById('daily-production').innerText = 'Error';
+                    document.getElementById('monthly-production').innerText = 'Error';
+                    document.getElementById('yearly-production').innerText = 'Error';
+                });
+
+            // Fetch Compliance Status
+            fetch(`${API_BASE_URL}/api/compliance/BCCL`)
+                .then(response => response.json())
+                .then(data => {
+                    const complianceGrid = document.getElementById('compliance-grid');
+                    complianceGrid.innerHTML = '';
+                    for (const [key, value] of Object.entries(data)) {
+                        const item = document.createElement('div');
+                        item.className = 'compliance-item';
+                        const icon = value === 'approved' ? 'check' : value === 'pending' ? 'hourglass-half' : 'exclamation-triangle';
+                        item.innerHTML = `
+                            <p>${key.replace('_', ' ').toUpperCase()}</p>
+                            <span class="status ${value}"><i class="fas fa-${icon}"></i> ${value}</span>
+                        `;
+                        complianceGrid.appendChild(item);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching compliance:', error);
+                    document.getElementById('compliance-grid').innerHTML = '<p>Error loading compliance data</p>';
+                });
+
+            // Fetch Notices
+            fetch(`${API_BASE_URL}/api/notices`)
+                .then(response => response.json())
+                .then(data => {
+                    const noticeList = document.getElementById('notice-list');
+                    noticeList.innerHTML = '';
+                    data.forEach(notice => {
+                        const p = document.createElement('p');
+                        p.className = 'notice-item';
+                        p.innerText = `${notice.date}: ${notice.text}`;
+                        noticeList.appendChild(p);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching notices:', error);
+                    document.getElementById('notice-list').innerHTML = '<p>Error loading notices</p>';
+                });
+
+            // Fetch Messages
+            fetch(`${API_BASE_URL}/api/messages/BCCL`)
+                .then(response => response.json())
+                .then(data => {
+                    const messageList = document.getElementById('message-list');
+                    messageList.innerHTML = '';
+                    data.forEach(message => {
+                        const p = document.createElement('p');
+                        p.className = `message-item ${message.sender === 'BCCL' ? 'sent' : 'received'}`;
+                        p.innerText = `${message.date}: ${message.text} (${message.sender})`;
+                        messageList.appendChild(p);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching messages:', error);
+                    document.getElementById('message-list').innerHTML = '<p>Error loading messages</p>';
+                });
+
+            // Fetch Auctions with polling
+            function updateAuctions() {
+                fetch(`${API_BASE_URL}/api/auctions`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const auctionList = document.getElementById('auction-list');
+                        auctionList.innerHTML = '';
+                        data.forEach(auction => {
+                            const p = document.createElement('p');
+                            p.className = 'auction-item';
+                            p.setAttribute('data-status', auction.status); // For CSS badge
+                            p.innerHTML = `
+                                <strong>${auction.name}</strong><br>
+                                Reserve: ₹${auction.reserve.toLocaleString()}<br>
+                                Created: ${auction.created}<br>
+                                Status: ${auction.status}
+                            `;
+                            auctionList.appendChild(p);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching auctions:', error);
+                        document.getElementById('auction-list').innerHTML = '<p>Error loading auctions</p>';
+                    });
+            }
+
+            // Initial fetch and polling
+            updateAuctions();
+            setInterval(updateAuctions, 5000); // Poll every 5 seconds
+        });
+
+        // Send Message to Government
+        function sendMessage() {
+            const messageText = document.getElementById('message-text').value.trim();
+            if (messageText) {
+                fetch(`${API_BASE_URL}/api/send-message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ company: 'BCCL', text: messageText })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const messageList = document.getElementById('message-list');
+                        const p = document.createElement('p');
+                        p.className = 'message-item sent';
+                        p.innerText = `${data.message.date}: ${data.message.text} (BCCL)`;
+                        messageList.insertBefore(p, messageList.firstChild);
+                        document.getElementById('message-text').value = '';
+                        alert('Message sent successfully');
+                    })
+                    .catch(error => {
+                        console.error('Error sending message:', error);
+                        alert('Failed to send message');
+                    });
+            } else {
+                alert('Please enter a message');
+            }
+        }
+
+        // Fetch and display company-wise summary
+        function loadCompanySummary() {
+            fetch(`${API_BASE_URL}/api/company-summary`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#company-table tbody');
+                    tableBody.innerHTML = '';
+
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+
+                        let color = '#ffc107'; // yellow for pending
+                        if (item.status === 'approved') color = '#28a745';
+                        else if (item.status === 'rejected') color = '#dc3545';
+
+                        row.innerHTML = `
+                            <td>${item.company}</td>
+                            <td>${item.production.toLocaleString()}</td>
+                            <td>${item.emissions.toLocaleString()}</td>
+                            <td>${item.intensity}</td>
+                            <td style="color:${color}; font-weight:bold; text-transform:capitalize;">
+                                ${item.status}
+                            </td>
+                            <td>
+                                <button class="approve-btn" onclick="updateCompliance('${item.company}', 'approve')">Approve</button>
+                                <button class="reject-btn" onclick="updateCompliance('${item.company}', 'reject')">Reject</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error loading company summary:', error));
+        }
+
+        // Approve or Reject company compliance
+        function updateCompliance(company, action) {
+            const endpoint = `${API_BASE_URL}/api/${action}/${company}`;
+            fetch(endpoint, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    loadCompanySummary(); // Refresh table
+                })
+                .catch(error => {
+                    console.error(`Error during ${action}:`, error);
+                    alert('Something went wrong while updating compliance.');
+                });
+        }
+
+        // Load company summary when page opens
+        document.addEventListener('DOMContentLoaded', loadCompanySummary);
+
+        // Generate report and refresh list
+        function generateReport(type) {
+            fetch(`${API_BASE_URL}/api/generate-report`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.report && data.report.url) {
+                        alert(`${data.report.type} generated successfully!`);
+                        loadReports();
+                    } else {
+                        alert('Error: Could not generate report.');
+                    }
+                })
+                .catch(error => console.error('Error generating report:', error));
+        }
+
+        // Load existing reports
+        function loadReports() {
+            fetch(`${API_BASE_URL}/api/reports`)
+                .then(response => response.json())
+                .then(data => {
+                    const reportList = document.getElementById('reports');
+                    reportList.innerHTML = '';
+                    data.forEach(rep => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <strong>${rep.date}</strong> – ${rep.type}  
+                            <a href="${rep.url}" target="_blank">[Download]</a>
+                        `;
+                        reportList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error fetching reports:', error));
+        }
+
+        // Auto-load reports when dashboard opens
+        document.addEventListener('DOMContentLoaded', loadReports);
+
+        // Load and visualize production & emissions data
+        function loadCharts() {
+            fetch(`${API_BASE_URL}/api/companies`)
+                .then(response => response.json())
+                .then(data => {
+                    const companies = data.map(d => d.name);
+                    const production = data.map(d => d.production);
+                    const emissions = data.map(d => d.emissions);
+                    const complianceStatus = data.map(d => d.compliance_status);
+
+                    // Chart 1: Production vs Emissions
+                    const ctx1 = document.getElementById('productionEmissionChart').getContext('2d');
+                    new Chart(ctx1, {
+                        type: 'bar',
+                        data: {
+                            labels: companies,
+                            datasets: [
+                                {
+                                    label: 'Production (tons)',
+                                    data: production,
+                                    backgroundColor: 'rgba(0, 196, 204, 0.7)'
+                                },
+                                {
+                                    label: 'Emissions (tons)',
+                                    data: emissions,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Production vs Emissions (Company-wise)',
+                                    font: { size: 18 }
+                                },
+                                legend: { position: 'top' }
+                            },
+                            scales: {
+                                x: { title: { display: true, text: 'Company' } },
+                                y: { title: { display: true, text: 'Tons' } }
+                            }
+                        }
+                    });
+
+                    // Chart 2: Compliance Overview
+                    const ctx2 = document.getElementById('complianceChart').getContext('2d');
+                    const complianceCounts = {
+                        approved: complianceStatus.filter(s => s === 'approved').length,
+                        pending: complianceStatus.filter(s => s === 'pending').length,
+                        rejected: complianceStatus.filter(s => s === 'rejected').length
+                    };
+
+                    new Chart(ctx2, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Approved', 'Pending', 'Rejected'],
+                            datasets: [{
+                                data: [complianceCounts.approved, complianceCounts.pending, complianceCounts.rejected],
+                                backgroundColor: [
+                                    'rgba(0, 200, 83, 0.7)',
+                                    'rgba(255, 193, 7, 0.7)',
+                                    'rgba(244, 67, 54, 0.7)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Compliance Status Distribution',
+                                    font: { size: 18 }
+                                },
+                                legend: { position: 'bottom' }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading charts:', error));
+        }
+
+        // Auto-load charts when dashboard opens
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCharts();        // initial chart render
+            setInterval(loadCharts, 30000);  // auto-refresh every 30s
+        });
+
+
+        // Fetch Predictive Forecast
+        fetch(`${API_BASE_URL}/api/predict-future`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('forecast-year').innerText = data.year;
+            document.getElementById('forecast-production').innerText = `${data.predicted_production.toLocaleString()} tonnes`;
+            document.getElementById('forecast-emission').innerText = `${data.predicted_emissions.toLocaleString()} tonnes CO₂`;
+        })
+        .catch(error => {
+            console.error('Error fetching forecast:', error);
+            document.getElementById('forecast-year').innerText = 'Error';
+            document.getElementById('forecast-production').innerText = 'Error';
+            document.getElementById('forecast-emission').innerText = 'Error';
+        });
+
+
+        // Compliance Heatmap: build table & coloring
+        function colorForStatus(status) {
+            if (!status) return '#6c757d';
+            status = status.toLowerCase();
+            if (status === 'approved') return '#28a745';
+            if (status === 'pending') return '#ffc107';
+            if (status === 'rejected') return '#dc3545';
+            return '#6c757d';
+        }
+
+        function metricColor(value, metric) {
+            // normalize and return a color (blue=good, red=bad) — adjust direction per metric
+            // We will map value to 0..1 using min/max present in the dataset
+            // For emission_intensity we consider lower = better, so invert color mapping accordingly
+            const v = value === null || value === undefined ? 0 : value;
+            // will be replaced with proper min/max per dataset in compute step
+            return v;
+        }
+
+        async function loadComplianceHeatmap() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/company-summary`);
+                const data = await res.json();
+
+                // Build arrays and compute metric min/max
+                const metric = document.getElementById('heatmapMetric').value;
+                const rows = data.map(d => {
+                    return {
+                        company: d.company,
+                        status: d.status || 'pending',
+                        score: ('score' in d) ? d.score : (d.intensity ? (100 - d.intensity) : null),
+                        emission_intensity: d.intensity !== undefined ? d.intensity : null,
+                        green_investment: ('green_investment_ratio' in d) ? d.green_investment_ratio : null,
+                        raw: d
+                    };
+                });
+
+                // compute min/max for chosen metric
+                let metricKey = 'score';
+                if (metric === 'emission_intensity') metricKey = 'emission_intensity';
+                else if (metric === 'green_investment') metricKey = 'green_investment';
+
+                const vals = rows.map(r => r[metricKey]).filter(v => v !== null && !isNaN(v));
+                const minV = vals.length ? Math.min(...vals) : 0;
+                const maxV = vals.length ? Math.max(...vals) : 1;
+
+                // table header
+                const tbody = document.querySelector('#heatmap-table tbody');
+                tbody.innerHTML = '';
+
+                rows.forEach(r => {
+                    const tr = document.createElement('tr');
+
+                    // company cell
+                    const tdCompany = document.createElement('td');
+                    tdCompany.innerText = r.company;
+                    tdCompany.style.cursor = 'pointer';
+                    tdCompany.onclick = () => { openCompanyDetails(r.raw.company); };
+                    tr.appendChild(tdCompany);
+
+                    // status cell
+                    const tdStatus = document.createElement('td');
+                    const badge = document.createElement('span');
+                    badge.className = 'status-badge';
+                    badge.innerText = r.status;
+                    badge.style.background = colorForStatus(r.status);
+                    tdStatus.appendChild(badge);
+                    tr.appendChild(tdStatus);
+
+                    // metric cell with gradient color
+                    const tdMetric = document.createElement('td');
+                    tdMetric.className = 'metric-cell';
+                    let metricVal = r[metricKey];
+                    if (metricVal === null || metricVal === undefined || isNaN(metricVal)) {
+                        tdMetric.innerText = '—';
+                    } else {
+                        tdMetric.innerText = Number(metricVal).toLocaleString(undefined, {maximumFractionDigits:2});
+                        // compute normalized 0..1
+                        const norm = (metricVal - minV) / (maxV - minV || 1);
+                        // invert for metrics where smaller is better (emission_intensity)
+                        const invert = (metricKey === 'emission_intensity');
+                        const t = invert ? (1 - norm) : norm;
+                        // color interpolation: blue (good) -> red (bad)
+                        const rcol = Math.round(255 * t);
+                        const gcol = Math.round(120 * (1 - t));
+                        const bcol = Math.round(255 * (1 - t));
+                        tdMetric.style.background = `linear-gradient(90deg, rgba(255,255,255,0), rgba(${rcol},${gcol},${bcol},0.18))`;
+                    }
+                    tr.appendChild(tdMetric);
+
+                    tbody.appendChild(tr);
+                });
+
+                // update metric header text
+                const header = document.getElementById('metricHeader');
+                header.innerText = metric === 'score' ? 'Score' : (metric === 'emission_intensity' ? 'Emission Intensity' : 'Green Investment Ratio');
+
+            } catch (err) {
+                console.error('Error loading heatmap', err);
+            }
+        }
+
+        // small helper to open details (can be extended to modal)
+        function openCompanyDetails(company) {
+            // you can call an endpoint like /api/production/<company> to show more — for now console log
+            console.log('Open details for', company);
+            // optionally fetch company-specific endpoints and show a modal
+            fetch(`${API_BASE_URL}/api/production/${encodeURIComponent(company)}`)
+                .then(r => r.json())
+                .then(d => {
+                    alert(`${company}\nDaily: ${d.daily}\nMonthly: ${d.monthly}\nYearly: ${d.yearly}`);
+                })
+                .catch(e => console.warn('No company details available', e));
+        }
+
+        // tie controls
+        document.getElementById('heatmapMetric').addEventListener('change', loadComplianceHeatmap);
+        document.getElementById('refreshHeatmap').addEventListener('click', loadComplianceHeatmap);
+
+        // load on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // ensure other DOMContentLoaded handlers still run; this adds heatmap load
+            loadComplianceHeatmap();
+            setInterval(loadComplianceHeatmap, 30000);
+
+        });
+
+
+
+
+
+        </script>
+    </body>
+</html>
